@@ -1,6 +1,5 @@
 <template>
   <section class="flex flex-col min-w-[520px] w-full">
-    <!-- Customer Support Agent -->
     <div class="flex items-center gap-3.5 pb-4 border-b border-dashed">
       <div>
         <div
@@ -12,12 +11,11 @@
       <div>
         <div class="font-medium truncate max-w-[9rem] md:max-w-none">Jacko</div>
         <div class="text-slate-500 mt-0.5 truncate max-w-[9rem] md:max-w-none">
-          Customer Support Agent
+          Existential Support Agent
         </div>
       </div>
     </div>
 
-    <!-- Messages -->
     <div v-if="pending" class="text-center text-2xl py-12">
       <svg
         fill="none"
@@ -40,13 +38,13 @@
       class="flex flex-col gap-3.5 py-5 px-3 overflow-y-scroll max-h-[400px]"
     >
       <div
-        v-for="message in messages"
+        v-for="(message, index) in messages"
+        :key="message.id"
         class="flex items-end gap-3"
-        :class="{ 'flex-row-reverse': !message.isJacko }"
+        :class="{ 'flex-row-reverse': !message.isJacko && index !== 0 }"
       >
-        <!-- Profile Image -->
         <img
-          v-if="message.isJacko"
+          v-if="index === 0 || message.isJacko"
           class="block w-16 h-16 overflow-hidden rounded-full border-2 border-slate-200/70"
           src="/jacko.jpg"
         />
@@ -77,8 +75,6 @@
 </template>
 
 <script setup lang="ts">
-// import { type ThreadMessage } from "openai/resources/beta/threads/message.d.ts";
-
 const messages = useMessages();
 const { customerInitials } = useCustomer();
 const container = ref();
@@ -95,6 +91,7 @@ const { pending } = await useFetch("/api/message", {
     response._data.data.reverse().forEach((element) => {
       const content = element.content[0];
 
+      // This is like this because the API returns an array of message
       if (content?.type === "text") {
         messages.value.push({
           name: content.role === "assistant" ? "Jacko" : customerInitials.value,
@@ -104,7 +101,6 @@ const { pending } = await useFetch("/api/message", {
         });
       }
     });
-    // This is like this because the API returns an array of message
   },
 });
 </script>

@@ -40,6 +40,7 @@ const isSubmitting = ref(false);
 
 async function handleSubmit() {
   isSubmitting.value = true;
+
   messages.value.push({
     name: customerInitials,
     message: newMessage.value,
